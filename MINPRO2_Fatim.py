@@ -41,7 +41,7 @@ def input_angka(pesan):
 def login():
     while True:
         print("Halaman Login")
-        username = input("Username: ")
+        username = input_wajib("Username: ")
         password = pwinput.pwinput(
             prompt= "Password: ", mask="*"
             )
@@ -98,6 +98,7 @@ def ajukan_cuti(username):
     status = status_cuti(jumlah_hari)
     data = {
         "ID Cuti": id_cuti,
+        "pemilik": pemilik,
         "Nama": nama,
         "Jumlah Hari Cuti": jumlah_hari,
         "Alasan": alasan,
@@ -108,15 +109,14 @@ def ajukan_cuti(username):
     print("Status cuti:", status)
 
 def lihat_riwayat(username):
-    data_riwayat = []
     if akun[username]["role"] == "admin":
         tabel(daftar_cuti)
     else:
         data_sendiri = []
         for cuti in daftar_cuti:
-            if cuti["Nama"] == akun[username]["nama"]:
+            if cuti["pemilik"] == username:
                 data_sendiri.append(cuti)
-                tabel(data_sendiri)
+        tabel(data_sendiri)
 
 def ubah_cuti(username):
     id_cuti = input_wajib("Masukkan ID Cuti yang ingin diubah: ")
@@ -140,7 +140,7 @@ def ubah_cuti(username):
     elif pilihan_ubah == "2":
         jumlah_hari_baru = input_angka("Masukkan jumlah hari cuti baru: ")
         cuti["Jumlah Hari Cuti"] = jumlah_hari_baru
-        cuti["status"] = status_cuti(jumlah_hari_baru)
+        cuti["Status"] = status_cuti(jumlah_hari_baru)
     elif pilihan_ubah == "3":
         alasan_baru = input_wajib("Masukkan alasan baru: ")
         cuti["Alasan"] = alasan_baru
@@ -159,7 +159,7 @@ def batalkan_cuti(username):
 
     if akun[username]["role"] == "user":
         if cuti["pemilik"] != username:
-            print("Anda tidak bisa mengubah cuti selain milik anda.")
+            print("Anda tidak bisa menghapus cuti selain milik anda.")
             return
 
     daftar_cuti.remove(cuti)
